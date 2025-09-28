@@ -1,5 +1,9 @@
 package tech.miladsadeghi.accounts.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,6 +17,10 @@ import tech.miladsadeghi.accounts.dtos.CustomerDTO;
 import tech.miladsadeghi.accounts.dtos.ResponseDTO;
 import tech.miladsadeghi.accounts.services.IAccountsService;
 
+@Tag(
+        name = "Accounts",
+        description = "APIs for managing customer accounts"
+)
 @RestController
 @RequestMapping(path = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
@@ -21,6 +29,11 @@ public class AccountsController {
 
     private final IAccountsService iAccountsService;
 
+    @Operation(
+            summary = "Create Account",
+            description = "Create a new account for a customer"
+    )
+    @ApiResponse(responseCode = "201", description = "Account created successfully")
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
         iAccountsService.createAccount(customerDTO);
@@ -29,6 +42,11 @@ public class AccountsController {
                 .body(new ResponseDTO(AccountsConstants.STATUS_201, AccountsConstants.MESSAGE_201));
     }
 
+    @Operation(
+            summary = "Fetch Account Details",
+            description = "Fetch account details for a customer by mobile number"
+    )
+    @ApiResponse(responseCode = "200", description = "Account details fetched successfully")
     @GetMapping(path = "/fetch")
     public ResponseEntity<CustomerDTO> fetchAccountDetails(
             @RequestParam
@@ -40,6 +58,16 @@ public class AccountsController {
         return ResponseEntity.status(HttpStatus.OK).body(customerDTO);
     }
 
+    @Operation(
+            summary = "Update Account Details",
+            description = "Update account details for a customer"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Account details updated successfully"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            }
+    )
     @PutMapping(path = "/update")
     public ResponseEntity<ResponseDTO> updateAccountDetails(@Valid @RequestBody CustomerDTO customerDTO) {
         boolean isUpdated = iAccountsService.updateAccount(customerDTO);
@@ -54,6 +82,16 @@ public class AccountsController {
         }
     }
 
+    @Operation(
+            summary = "Delete Account",
+            description = "Delete a customer's account by mobile number"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
+                    @ApiResponse(responseCode = "500", description = "Internal server error")
+            }
+    )
     @DeleteMapping(path = "/delete")
     public ResponseEntity<ResponseDTO> deleteAccount(
             @RequestParam
