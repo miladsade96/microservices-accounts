@@ -1,9 +1,12 @@
 package tech.miladsadeghi.accounts.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tech.miladsadeghi.accounts.constants.AccountsConstants;
 import tech.miladsadeghi.accounts.dtos.CustomerDTO;
@@ -13,12 +16,13 @@ import tech.miladsadeghi.accounts.services.IAccountsService;
 @RestController
 @RequestMapping(path = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
+@Validated
 public class AccountsController {
 
     private final IAccountsService iAccountsService;
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseDTO> createAccount(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
         iAccountsService.createAccount(customerDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -26,13 +30,18 @@ public class AccountsController {
     }
 
     @GetMapping(path = "/fetch")
-    public ResponseEntity<CustomerDTO> fetchAccountDetails(@RequestParam String mobileNumber) {
+    public ResponseEntity<CustomerDTO> fetchAccountDetails(
+            @RequestParam
+            @Pattern(
+                    regexp = "^(\\+98|0)?9\\d{9}$",
+                    message = "Mobile number must be a valid mobile number"
+            ) String mobileNumber) {
         CustomerDTO customerDTO = iAccountsService.fetchAccountDetails(mobileNumber);
         return ResponseEntity.status(HttpStatus.OK).body(customerDTO);
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO> updateAccountDetails(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDTO> updateAccountDetails(@Valid @RequestBody CustomerDTO customerDTO) {
         boolean isUpdated = iAccountsService.updateAccount(customerDTO);
         if (isUpdated) {
             return ResponseEntity
@@ -46,7 +55,12 @@ public class AccountsController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO> deleteAccount(@RequestParam String mobileNumber) {
+    public ResponseEntity<ResponseDTO> deleteAccount(
+            @RequestParam
+            @Pattern(
+                    regexp = "^(\\+98|0)?9\\d{9}$",
+                    message = "Mobile number must be a valid mobile number"
+            ) String mobileNumber) {
         boolean isDeleted = iAccountsService.deleteAccount(mobileNumber);
         if (isDeleted) {
             return ResponseEntity
