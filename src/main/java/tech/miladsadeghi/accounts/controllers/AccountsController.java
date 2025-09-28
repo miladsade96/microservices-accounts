@@ -36,7 +36,17 @@ public class AccountsController {
             summary = "Create Account",
             description = "Create a new account for a customer"
     )
-    @ApiResponse(responseCode = "201", description = "Account created successfully")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "201", description = "Account created successfully"),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
+            }
+    )
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO) {
         iAccountsService.createAccount(customerDTO);
@@ -49,7 +59,17 @@ public class AccountsController {
             summary = "Fetch Account Details",
             description = "Fetch account details for a customer by mobile number"
     )
-    @ApiResponse(responseCode = "200", description = "Account details fetched successfully")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Account details fetched successfully"),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
+            }
+    )
     @GetMapping(path = "/fetch")
     public ResponseEntity<CustomerDTO> fetchAccountDetails(
             @RequestParam
@@ -68,6 +88,7 @@ public class AccountsController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Account details updated successfully"),
+                    @ApiResponse(responseCode = "417", description = "Expectation Failed"),
                     @ApiResponse(
                             responseCode = "500",
                             description = "Internal server error",
@@ -97,6 +118,7 @@ public class AccountsController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
+                    @ApiResponse(responseCode = "417", description = "Expectation Failed"),
                     @ApiResponse(
                             responseCode = "500",
                             description = "Internal server error",
