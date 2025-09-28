@@ -8,7 +8,7 @@ import tech.miladsadeghi.accounts.entities.Customer;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomerMapper {
 
-    public static CustomerDTO mapToCustomerDTO(CustomerDTO customer, CustomerDTO customerDTO) {
+    public static CustomerDTO mapToCustomerDTO(Customer customer, CustomerDTO customerDTO) {
         customerDTO.setName(customer.getName());
         customerDTO.setEmail(customer.getEmail());
         customerDTO.setMobileNumber(customer.getMobileNumber());
