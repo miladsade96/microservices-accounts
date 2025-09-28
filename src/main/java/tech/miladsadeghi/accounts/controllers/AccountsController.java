@@ -1,6 +1,8 @@
 package tech.miladsadeghi.accounts.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tech.miladsadeghi.accounts.constants.AccountsConstants;
 import tech.miladsadeghi.accounts.dtos.CustomerDTO;
+import tech.miladsadeghi.accounts.dtos.ErrorResponseDTO;
 import tech.miladsadeghi.accounts.dtos.ResponseDTO;
 import tech.miladsadeghi.accounts.services.IAccountsService;
 
@@ -65,7 +68,12 @@ public class AccountsController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Account details updated successfully"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
             }
     )
     @PutMapping(path = "/update")
@@ -89,7 +97,12 @@ public class AccountsController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
             }
     )
     @DeleteMapping(path = "/delete")
