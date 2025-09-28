@@ -15,7 +15,6 @@ import tech.miladsadeghi.accounts.repositories.AccountsRepository;
 import tech.miladsadeghi.accounts.repositories.CustomerRepository;
 import tech.miladsadeghi.accounts.services.IAccountsService;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,8 +33,6 @@ public class AccountsServiceImpl implements IAccountsService {
             String message = String.format("Customer with mobile number %s already exists!", customerDTO.getMobileNumber());
             throw new CustomerAlreadyExistsException(message);
         }
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("Anonymous");
         Customer savedCustomer = customerRepository.save(customer);
         accountsRepository.save(createNewAccount(savedCustomer));
     }
@@ -89,8 +86,6 @@ public class AccountsServiceImpl implements IAccountsService {
         account.setAccountNumber(randomAccountNumber);
         account.setAccountType(AccountsConstants.SAVINGS);
         account.setBranchAddress(AccountsConstants.ADDRESS);
-        account.setCreatedAt(LocalDateTime.now());
-        account.setCreatedBy("Anonymous");
         return account;
     }
 }
