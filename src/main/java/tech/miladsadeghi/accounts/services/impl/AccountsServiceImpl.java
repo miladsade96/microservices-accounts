@@ -3,10 +3,13 @@ package tech.miladsadeghi.accounts.services.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import tech.miladsadeghi.accounts.constants.AccountsConstants;
+import tech.miladsadeghi.accounts.dtos.AccountsDTO;
 import tech.miladsadeghi.accounts.dtos.CustomerDTO;
 import tech.miladsadeghi.accounts.entities.Accounts;
 import tech.miladsadeghi.accounts.entities.Customer;
 import tech.miladsadeghi.accounts.exceptions.CustomerAlreadyExistsException;
+import tech.miladsadeghi.accounts.exceptions.ResourceNotFoundException;
+import tech.miladsadeghi.accounts.mappers.AccountsMapper;
 import tech.miladsadeghi.accounts.mappers.CustomerMapper;
 import tech.miladsadeghi.accounts.repositories.AccountsRepository;
 import tech.miladsadeghi.accounts.repositories.CustomerRepository;
@@ -35,6 +38,19 @@ public class AccountsServiceImpl implements IAccountsService {
         customer.setCreatedBy("Anonymous");
         Customer savedCustomer = customerRepository.save(customer);
         accountsRepository.save(createNewAccount(savedCustomer));
+    }
+
+    @Override
+    public CustomerDTO fetchAccountDetails(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
+
+        Accounts account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "customerId", String.valueOf(customer.getCustomerId())));
+
+        CustomerDTO customerDTO = CustomerMapper.mapToCustomerDTO(customer, new CustomerDTO());
+        customerDTO.setAccountsDTO(AccountsMapper.mapToAccountsDTO(account, new AccountsDTO()));
+        return customerDTO;
     }
 
     private Accounts createNewAccount(Customer customer) {
