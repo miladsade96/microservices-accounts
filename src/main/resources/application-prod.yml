@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "1.0.0"
+
+accounts:
+  message: "Welcome to the Accounts Service - Production Environment"
+  contactDetails:
+    name: "Rebeca Smith"
+    email: "RebeccaSmith@gmail.com"
+  onCallSupport:
+    - 123-456-7890
+    - 987-654-3210
