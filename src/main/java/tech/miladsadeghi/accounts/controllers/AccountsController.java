@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +32,15 @@ public class AccountsController {
 
     private final IAccountsService iAccountsService;
     private final String buildVersion;
+    private final Environment environment;
 
-    public AccountsController(IAccountsService iAccountsService, @Value("${build.version}") String buildVersion) {
+    public AccountsController(
+            IAccountsService iAccountsService,
+            @Value("${build.version}") String buildVersion,
+            Environment environment) {
         this.iAccountsService = iAccountsService;
         this.buildVersion = buildVersion;
+        this.environment = environment;
     }
 
     @Operation(
@@ -169,5 +175,25 @@ public class AccountsController {
     @GetMapping("/build-version")
     public ResponseEntity<String> getBuildVersion() {
         return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+    }
+
+    @Operation(
+            summary = "Get Java Version",
+            description = "Retrieve the current Java version the application is running on"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Java version fetched successfully"),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
+            }
+    )
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
     }
 }
