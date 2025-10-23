@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tech.miladsadeghi.accounts.constants.AccountsConstants;
+import tech.miladsadeghi.accounts.dtos.AccountsContactInfoDTO;
 import tech.miladsadeghi.accounts.dtos.CustomerDTO;
 import tech.miladsadeghi.accounts.dtos.ErrorResponseDTO;
 import tech.miladsadeghi.accounts.dtos.ResponseDTO;
@@ -33,14 +34,18 @@ public class AccountsController {
     private final IAccountsService iAccountsService;
     private final String buildVersion;
     private final Environment environment;
+    private final AccountsContactInfoDTO accountsContactInfoDTO;
 
     public AccountsController(
             IAccountsService iAccountsService,
             @Value("${build.version}") String buildVersion,
-            Environment environment) {
+            Environment environment,
+            AccountsContactInfoDTO accountsContactInfoDTO) {
+
         this.iAccountsService = iAccountsService;
         this.buildVersion = buildVersion;
         this.environment = environment;
+        this.accountsContactInfoDTO = accountsContactInfoDTO;
     }
 
     @Operation(
@@ -195,5 +200,25 @@ public class AccountsController {
     @GetMapping("/java-version")
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(
+            summary = "Get Contact Info",
+            description = "Retrieve the contact information from environment variables"
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Java version fetched successfully"),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponseDTO.class)
+                            ))
+            }
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDTO> getContactInfo() {
+        return ResponseEntity.status(HttpStatus.OK).body(accountsContactInfoDTO);
     }
 }
