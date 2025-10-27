@@ -1,30 +1,28 @@
 server:
   port: 8080
+
 spring:
+  application:
+    name: "accounts"
+
+  profiles:
+    active: "prod"
+
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: user
     password: password
+
   h2:
     console:
       enabled: true
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: "qa"
 
-build:
-  version: "3.0.0"
-
-accounts:
-  message: "Welcome to the Accounts Service"
-  contactDetails:
-    name: "Milad"
-    email: "milad@gmail.com"
-  onCallSupport:
-    - 123-456-7890
-    - 987-654-3210
+  config:
+    import: "optional:configserver:http://localhost:8071"
