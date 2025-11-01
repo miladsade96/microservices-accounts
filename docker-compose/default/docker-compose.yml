@@ -1,0 +1,65 @@
+services:
+
+  config-server:
+    image: miladsade96/configserver:s6
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    networks:
+      - default
+
+  accounts:
+    image: miladsade96/accounts:s6
+    container_name: accounts-ms
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    networks:
+      - default
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
+      SPRING_PROFILES_ACTIVE: "default"
+  
+  loans:
+    image: miladsade96/loans:s6
+    container_name: loans-ms
+    ports:
+      - "8090:8090"
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    networks:
+      - default
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
+      SPRING_PROFILES_ACTIVE: "default"
+
+  cards:
+    image: miladsade96/cards:s6
+    container_name: cards-ms
+    ports:
+      - "8070:8070"
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    networks:
+      - default
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
+      SPRING_PROFILES_ACTIVE: "default"
+
+networks:
+  default:
+    driver: bridge
