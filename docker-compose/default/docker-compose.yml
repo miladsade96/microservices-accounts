@@ -1,8 +1,6 @@
 services:
-
   rabbit:
     image: rabbitmq:4-management
-    container_name: rabbitmq
     hostname: rabbitmq
     ports:
       - "5672:5672"
@@ -12,12 +10,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
-    networks:
-      - default
-  
-  config-server:
-    image: miladsade96/configserver:s6
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  configserver:
+    image: "miladsade96/configserver:s6"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -25,75 +24,57 @@ services:
       rabbit:
         condition: service_healthy
     healthcheck:
-      test: "curl --fail --silent http://localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
-    networks:
-      - default
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
 
   accounts:
-    image: miladsade96/accounts:s6
+    image: "miladsade96/accounts:s6"
     container_name: accounts-ms
     ports:
       - "8080:8080"
     depends_on:
-      config-server:
+      configserver:
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
-    networks:
-      - default
     environment:
       SPRING_APPLICATION_NAME: "accounts"
-      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
-      SPRING_PROFILES_ACTIVE: "default"
-  
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
   loans:
-    image: miladsade96/loans:s6
+    image: "miladsade96/loans:s6"
     container_name: loans-ms
     ports:
       - "8090:8090"
     depends_on:
-      config-server:
+      configserver:
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
-    networks:
-      - default
     environment:
       SPRING_APPLICATION_NAME: "loans"
-      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
-      SPRING_PROFILES_ACTIVE: "default"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
 
   cards:
-    image: miladsade96/cards:s6
+    image: "miladsade96/cards:s6"
     container_name: cards-ms
     ports:
       - "8070:8070"
     depends_on:
-      config-server:
+      configserver:
         condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 1024m
-    networks:
-      - default
     environment:
       SPRING_APPLICATION_NAME: "cards"
-      SPRING_CONFIG_IMPORT: "configserver://http://config-server:8071"
-      SPRING_PROFILES_ACTIVE: "default"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
 
 networks:
   default:
-    driver: bridge
+    driver: "bridge"
