@@ -10,6 +10,6 @@ import tech.miladsadeghi.accounts.dtos.CardsDTO;
 public interface CardsFeignClient {
 
     @GetMapping(value = "/api/cards/fetch", consumes = "application/json")
-    public ResponseEntity<CardsDTO> fetchCardDetails(@RequestParam String mobileNumber);
+    ResponseEntity<CardsDTO> fetchCardDetails(@RequestParam String mobileNumber);
 
 }

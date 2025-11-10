@@ -10,6 +10,6 @@ import tech.miladsadeghi.accounts.dtos.LoansDTO;
 public interface LoansFeignClient {
 
     @GetMapping(value = "/api/loans/fetch", consumes = "application/json")
-    public ResponseEntity<LoansDTO> fetchLoanDetails(@RequestParam String mobileNumber);
+    ResponseEntity<LoansDTO> fetchLoanDetails(@RequestParam String mobileNumber);
 
 }
