@@ -137,7 +137,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>miladsade96/accounts:s8</image>
+                        <image>miladsade96/accounts:s9</image>
                     </to>
                 </configuration>
             </plugin>
