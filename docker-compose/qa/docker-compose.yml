@@ -46,8 +46,9 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "miladsade96/configserver:s7"
+    image: "miladsade96/configserver:s8"
     container_name: configserver-ms
+    hostname: configserver
     ports:
       - "8071:8071"
     depends_on:
@@ -63,9 +64,31 @@ services:
       file: common-config.yml
       service: microservice-base-config
 
+  eurekaserver:
+    image: "miladsade96/eurekaserver:s8"
+    container_name: eurekaserver-ms
+    hostname: eurekaserver
+    ports:
+      - "8072:8072"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8072/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+
   accounts:
-    image: "miladsade96/accounts:s7"
+    image: "miladsade96/accounts:s8"
     container_name: accounts-ms
+    hostname: accounts
     ports:
       - "8080:8080"
     depends_on:
@@ -73,16 +96,21 @@ services:
         condition: service_healthy
       acountsdb:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       SPRING_DATASOURCE_URL: "jdbc:mysql://acountsdb:3306/accountsdb"
+      EUREKA_INSTANCE_HOSTNAME: "accounts"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
   loans:
-    image: "miladsade96/loans:s7"
+    image: "miladsade96/loans:s8"
     container_name: loans-ms
+    hostname: loans
     ports:
       - "8090:8090"
     depends_on:
@@ -90,16 +118,21 @@ services:
         condition: service_healthy
       loansdb:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "loans"
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+      EUREKA_INSTANCE_HOSTNAME: "loans"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
   cards:
-    image: "miladsade96/cards:s7"
+    image: "miladsade96/cards:s8"
     container_name: cards-ms
+    hostname: cards
     ports:
       - "8070:8070"
     depends_on:
@@ -107,12 +140,16 @@ services:
         condition: service_healthy
       cardsdb:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "cards"
       SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3306/cardsdb"
+      EUREKA_INSTANCE_HOSTNAME: "cards"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eurekaserver-config
 
 networks:
   default:

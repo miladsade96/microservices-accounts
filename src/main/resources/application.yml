@@ -47,7 +47,7 @@ endpoints:
 
 eureka:
   instance:
-    hostname: "localhost"
+    prefer-ip-address: true
   client:
     fetch-registry: true
     register-with-eureka: true
