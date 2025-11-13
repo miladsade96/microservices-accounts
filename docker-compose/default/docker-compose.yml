@@ -125,6 +125,30 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
       EUREKA_INSTANCE_HOSTNAME: "loans"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      EUREKA_INSTANCE_INSTANCE-ID: "loans:8090"
+    extends:
+      file: common-config.yml
+      service: microservice-eurekaserver-config
+
+  loans1:
+    image: "miladsade96/loans:s8"
+    container_name: loans-ms1
+    hostname: loans
+    ports:
+      - "8091:8090"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      loansdb:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+      EUREKA_INSTANCE_HOSTNAME: "loans"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      EUREKA_INSTANCE_INSTANCE-ID: "loans:8091"
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
