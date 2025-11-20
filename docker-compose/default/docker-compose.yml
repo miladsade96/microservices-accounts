@@ -85,6 +85,26 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
+  gatewayserver:
+    image: "miladsade96/gatewayserver:s9"
+    container_name: gateway-ms
+    hostname: gatewayserver
+    ports:
+      - "8073:8073"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+      EUREKA_INSTANCE_HOSTNAME: "gatewayserver"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_INITIAL_DELAY: "60000"
+    extends:
+      file: common-config.yml
+      service: microservice-eurekaserver-config
+
   accounts:
     image: "miladsade96/accounts:s8"
     container_name: accounts-ms
