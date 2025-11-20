@@ -46,7 +46,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "miladsade96/configserver:s8"
+    image: "miladsade96/configserver:s9"
     container_name: configserver-ms
     hostname: configserver
     ports:
@@ -65,7 +65,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "miladsade96/eurekaserver:s8"
+    image: "miladsade96/eurekaserver:s9"
     container_name: eurekaserver-ms
     hostname: eurekaserver
     ports:
@@ -106,7 +106,7 @@ services:
       service: microservice-eurekaserver-config
 
   accounts:
-    image: "miladsade96/accounts:s8"
+    image: "miladsade96/accounts:s9"
     container_name: accounts-ms
     hostname: accounts
     ports:
@@ -128,7 +128,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans:
-    image: "miladsade96/loans:s8"
+    image: "miladsade96/loans:s9"
     container_name: loans-ms
     hostname: loans
     ports:
@@ -151,7 +151,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans1:
-    image: "miladsade96/loans:s8"
+    image: "miladsade96/loans:s9"
     container_name: loans-ms1
     hostname: loans
     ports:
@@ -174,7 +174,7 @@ services:
       service: microservice-eurekaserver-config
 
   cards:
-    image: "miladsade96/cards:s8"
+    image: "miladsade96/cards:s9"
     container_name: cards-ms
     hostname: cards
     ports:
