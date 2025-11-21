@@ -15,7 +15,7 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
-  acountsdb:
+  accountsdb:
     container_name: accountsdb
     ports:
       - "3306:3306"
@@ -111,16 +111,22 @@ services:
     hostname: accounts
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
-      acountsdb:
+      accountsdb:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://acountsdb:3306/accountsdb"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
       EUREKA_INSTANCE_HOSTNAME: "accounts"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
     extends:
@@ -133,6 +139,12 @@ services:
     hostname: loans
     ports:
       - "8090:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
@@ -153,9 +165,15 @@ services:
   loans1:
     image: "miladsade96/loans:s9"
     container_name: loans-ms1
-    hostname: loans
+    hostname: loans1
     ports:
       - "8091:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
@@ -166,7 +184,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "loans"
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
-      EUREKA_INSTANCE_HOSTNAME: "loans"
+      EUREKA_INSTANCE_HOSTNAME: "loans1"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
       EUREKA_INSTANCE_INSTANCE-ID: "loans:8091"
     extends:
@@ -179,6 +197,12 @@ services:
     hostname: cards
     ports:
       - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
