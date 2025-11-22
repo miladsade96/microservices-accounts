@@ -100,7 +100,7 @@ services:
       SPRING_APPLICATION_NAME: "gatewayserver"
       EUREKA_INSTANCE_HOSTNAME: "gatewayserver"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
-      SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_INITIAL_DELAY: "60000"
+      SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_INITIAL_DELAY: "90000"
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
