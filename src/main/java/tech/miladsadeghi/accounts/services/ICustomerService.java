@@ -4,5 +4,5 @@ import tech.miladsadeghi.accounts.dtos.CustomerDetailsDTO;
 
 public interface ICustomerService {
 
-    CustomerDetailsDTO fetchCustomerDetails(String mobileNumber);
+    CustomerDetailsDTO fetchCustomerDetails(String mobileNumber, String correlationId);
 }

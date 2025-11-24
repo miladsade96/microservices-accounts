@@ -8,16 +8,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.miladsadeghi.accounts.dtos.CustomerDetailsDTO;
 import tech.miladsadeghi.accounts.dtos.ErrorResponseDTO;
 import tech.miladsadeghi.accounts.services.ICustomerService;
+
 
 @Tag(
         name = "Rest API for Customers",
@@ -28,7 +28,7 @@ import tech.miladsadeghi.accounts.services.ICustomerService;
 @Validated
 @AllArgsConstructor
 public class CustomerController {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerController.class);
     private final ICustomerService customerService;
 
     @Operation(
@@ -48,13 +48,16 @@ public class CustomerController {
     )
     @GetMapping("/fetchCustomerDetails")
     public ResponseEntity<CustomerDetailsDTO> fetchCustomerDetails(
+            @RequestHeader("ms-correlation-id") String correlationId,
             @RequestParam
             @Pattern(
                     regexp = "^(\\+98|0)?9\\d{9}$",
                     message = "Mobile number must be a valid mobile number"
             ) String mobileNumber) {
 
-        CustomerDetailsDTO customerDetailsDTO = customerService.fetchCustomerDetails(mobileNumber);
+        LOG.info("Received request to fetch customer details for mobile number: {} with correlation ID: {}",
+                mobileNumber, correlationId);
+        CustomerDetailsDTO customerDetailsDTO = customerService.fetchCustomerDetails(mobileNumber, correlationId);
         return ResponseEntity.ok(customerDetailsDTO);
     }
 }
