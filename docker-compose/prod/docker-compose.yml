@@ -15,7 +15,7 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
-  acountsdb:
+  accountsdb:
     container_name: accountsdb
     ports:
       - "3306:3306"
@@ -46,7 +46,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "miladsade96/configserver:s8"
+    image: "miladsade96/configserver:s9"
     container_name: configserver-ms
     hostname: configserver
     ports:
@@ -65,7 +65,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "miladsade96/eurekaserver:s8"
+    image: "miladsade96/eurekaserver:s9"
     container_name: eurekaserver-ms
     hostname: eurekaserver
     ports:
@@ -85,22 +85,51 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
+  gatewayserver:
+    image: "miladsade96/gatewayserver:s9"
+    container_name: gateway-ms
+    hostname: gatewayserver
+    ports:
+      - "8073:8073"
+    depends_on:
+      accounts:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+      loans1:
+        condition: service_healthy
+      cards:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+      EUREKA_INSTANCE_HOSTNAME: "gatewayserver"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+    extends:
+      file: common-config.yml
+      service: microservice-eurekaserver-config
+
   accounts:
-    image: "miladsade96/accounts:s8"
+    image: "miladsade96/accounts:s9"
     container_name: accounts-ms
     hostname: accounts
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
-      acountsdb:
+      accountsdb:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://acountsdb:3306/accountsdb"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
       EUREKA_INSTANCE_HOSTNAME: "accounts"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
     extends:
@@ -108,11 +137,17 @@ services:
       service: microservice-eurekaserver-config
 
   loans:
-    image: "miladsade96/loans:s8"
+    image: "miladsade96/loans:s9"
     container_name: loans-ms
     hostname: loans
     ports:
       - "8090:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
@@ -125,16 +160,52 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
       EUREKA_INSTANCE_HOSTNAME: "loans"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      EUREKA_INSTANCE_INSTANCE-ID: "loans:8090"
+    extends:
+      file: common-config.yml
+      service: microservice-eurekaserver-config
+
+  loans1:
+    image: "miladsade96/loans:s9"
+    container_name: loans-ms1
+    hostname: loans1
+    ports:
+      - "8091:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      configserver:
+        condition: service_healthy
+      loansdb:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+      EUREKA_INSTANCE_HOSTNAME: "loans1"
+      EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      EUREKA_INSTANCE_INSTANCE-ID: "loans:8091"
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
 
   cards:
-    image: "miladsade96/cards:s8"
+    image: "miladsade96/cards:s9"
     container_name: cards-ms
     hostname: cards
     ports:
       - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy

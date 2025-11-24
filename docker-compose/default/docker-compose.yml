@@ -92,15 +92,18 @@ services:
     ports:
       - "8073:8073"
     depends_on:
-      configserver:
+      accounts:
         condition: service_healthy
-      eurekaserver:
+      loans:
+        condition: service_healthy
+      loans1:
+        condition: service_healthy
+      cards:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
       EUREKA_INSTANCE_HOSTNAME: "gatewayserver"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
-      SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_INITIAL_DELAY: "90000"
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
