@@ -86,7 +86,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   gatewayserver:
-    image: "miladsade96/gatewayserver:s9"
+    image: "miladsade96/gatewayserver:s10"
     container_name: gateway-ms
     hostname: gatewayserver
     ports:
