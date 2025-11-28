@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import tech.miladsadeghi.accounts.dtos.CardsDTO;
 
-@FeignClient("cards")
+@FeignClient(name = "cards",fallback = CardsFallback.class)
 public interface CardsFeignClient {
 
     @GetMapping(value = "/api/cards/fetch", consumes = "application/json")
