@@ -109,7 +109,7 @@ services:
       service: microservice-eurekaserver-config
 
   accounts:
-    image: "miladsade96/accounts:s9"
+    image: "miladsade96/accounts:s10"
     container_name: accounts-ms
     hostname: accounts
     ports:
