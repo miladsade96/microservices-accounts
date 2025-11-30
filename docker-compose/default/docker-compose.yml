@@ -137,7 +137,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans:
-    image: "miladsade96/loans:s9"
+    image: "miladsade96/loans:s10"
     container_name: loans-ms
     hostname: loans
     ports:
@@ -166,7 +166,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans1:
-    image: "miladsade96/loans:s9"
+    image: "miladsade96/loans:s10"
     container_name: loans-ms1
     hostname: loans1
     ports:
@@ -195,7 +195,7 @@ services:
       service: microservice-eurekaserver-config
 
   cards:
-    image: "miladsade96/cards:s9"
+    image: "miladsade96/cards:s10"
     container_name: cards-ms
     hostname: cards
     ports:
