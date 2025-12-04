@@ -46,7 +46,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "miladsade96/configserver:s9"
+    image: "miladsade96/configserver:s10"
     container_name: configserver-ms
     hostname: configserver
     ports:
@@ -65,7 +65,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "miladsade96/eurekaserver:s9"
+    image: "miladsade96/eurekaserver:s10"
     container_name: eurekaserver-ms
     hostname: eurekaserver
     ports:
