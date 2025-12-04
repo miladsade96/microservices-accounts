@@ -1,5 +1,6 @@
 package tech.miladsadeghi.accounts.controllers;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,6 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,8 @@ import tech.miladsadeghi.accounts.services.IAccountsService;
 @RequestMapping(path = "/api/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 public class AccountsController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountsController.class);
 
     private final IAccountsService iAccountsService;
     private final String buildVersion;
@@ -178,8 +183,15 @@ public class AccountsController {
             }
     )
     @GetMapping("/build-version")
+    @Retry(name = "getBuildVersionRetry", fallbackMethod = "getBuildVersionFallback")
     public ResponseEntity<String> getBuildVersion() {
+        LOGGER.info("Invoking getBuildVersion of AccountsController");
         return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+    }
+
+    public ResponseEntity<String> getBuildVersionFallback(Throwable throwable) {
+        LOGGER.info("Returning fallback Build Version");
+        return ResponseEntity.status(HttpStatus.OK).body("0.0.0-UNKNOWN");
     }
 
     @Operation(
