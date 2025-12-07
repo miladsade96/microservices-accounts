@@ -211,9 +211,13 @@ public class AccountsController {
             }
     )
     @GetMapping("/java-version")
-    @RateLimiter(name = "getJavaVersion")
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
     public ResponseEntity<String> getJavaVersion() {
         return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("JAVA_HOME"));
+    }
+
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+        return ResponseEntity.status(HttpStatus.OK).body("Java Version is not available at the moment.");
     }
 
     @Operation(
