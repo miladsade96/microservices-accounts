@@ -1,4 +1,19 @@
 services:
+  redis:
+    image: redis:8.4.0
+    container_name: redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
   rabbit:
     image: rabbitmq:4-management
     hostname: rabbitmq
@@ -46,7 +61,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "miladsade96/configserver:s9"
+    image: "miladsade96/configserver:s10"
     container_name: configserver-ms
     hostname: configserver
     ports:
@@ -65,7 +80,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "miladsade96/eurekaserver:s9"
+    image: "miladsade96/eurekaserver:s10"
     container_name: eurekaserver-ms
     hostname: eurekaserver
     ports:
@@ -86,7 +101,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   gatewayserver:
-    image: "miladsade96/gatewayserver:s9"
+    image: "miladsade96/gatewayserver:s10"
     container_name: gateway-ms
     hostname: gatewayserver
     ports:
@@ -100,16 +115,22 @@ services:
         condition: service_healthy
       cards:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
       EUREKA_INSTANCE_HOSTNAME: "gatewayserver"
       EUREKA_INSTANCE_PREFERIPADDRESS: "false"
+      SPRING_DATA_REDIS_TIMEOUT: 2s
+      SPRING_DATA_REDIS_HOST: "redis"
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_CONNECT_TIMEOUT: 1s
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
 
   accounts:
-    image: "miladsade96/accounts:s9"
+    image: "miladsade96/accounts:s10"
     container_name: accounts-ms
     hostname: accounts
     ports:
@@ -137,7 +158,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans:
-    image: "miladsade96/loans:s9"
+    image: "miladsade96/loans:s10"
     container_name: loans-ms
     hostname: loans
     ports:
@@ -166,7 +187,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans1:
-    image: "miladsade96/loans:s9"
+    image: "miladsade96/loans:s10"
     container_name: loans-ms1
     hostname: loans1
     ports:
@@ -195,7 +216,7 @@ services:
       service: microservice-eurekaserver-config
 
   cards:
-    image: "miladsade96/cards:s9"
+    image: "miladsade96/cards:s10"
     container_name: cards-ms
     hostname: cards
     ports:
