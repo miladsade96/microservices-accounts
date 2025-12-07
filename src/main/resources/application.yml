@@ -100,9 +100,13 @@ resilience4j:
   #        retry-exceptions:
   #          - java.util.concurrent.TimeoutException
 
+  # Explain rate limiter configuration:
+  # The rate limiter is configured to allow a maximum of 100 requests
+  # every 60 seconds. If the limit is exceeded, subsequent requests will
+  # wait for up to 1 second before being rejected.
   ratelimiter:
     configs:
       default:
-        timeout-duration: 1000
-        limit-refresh-period: 5000
-        limit-for-period: 1
+        timeout-duration: 1s
+        limit-refresh-period: 60s
+        limit-for-period: 100
